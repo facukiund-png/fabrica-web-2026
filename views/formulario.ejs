@@ -2,65 +2,84 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Elite - <%= id %></title>
+    <title>Constructor Pro - <%= id %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        body { background: #f8fafc; padding: 40px 0; font-family: 'Inter', sans-serif; }
-        .card { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .nav-pills .nav-link.active { background-color: #6366f1; }
-        .item-box { background: #f1f5f9; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0; }
+        body { background: #f8fafc; font-family: 'Inter', sans-serif; }
+        .sidebar-nav { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .nav-pills .nav-link { color: #64748b; border-radius: 12px; margin-bottom: 8px; border: 1px solid transparent; text-align: left; }
+        .nav-pills .nav-link.active { background: #eef2ff; color: #6366f1; border: 1px solid #e0e7ff; }
+        .builder-card { background: white; border-radius: 24px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        .product-item { background: #f1f5f9; padding: 20px; border-radius: 15px; margin-bottom: 15px; }
     </style>
 </head>
-<body>
-    <div class="container" style="max-width: 850px;">
-        <div class="card p-4 p-md-5">
-            <h2 class="fw-bold mb-4">Configurar Marca: <span class="text-primary"><%= id %></span></h2>
-            <form action="/guardar/<%= id %>" method="POST" id="mainForm">
-                <ul class="nav nav-pills mb-4" id="pills-tab">
-                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-1" type="button">Identidad</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-2" type="button">Servicios</button></li>
-                    <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-3" type="button">Estética & Contacto</button></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane fade show active" id="tab-1">
-                        <div class="row g-3">
-                            <div class="col-md-6"><label class="form-label fw-bold">Nombre</label><input type="text" name="brandName" class="form-control" value="<%= data.brandName || '' %>" required></div>
-                            <div class="col-md-6"><label class="form-label fw-bold">URL Logo</label><input type="text" name="logo" class="form-control" value="<%= data.logo || '' %>"></div>
-                            <div class="col-12"><label class="form-label fw-bold">URL Imagen Fondo (Hero)</label><input type="text" name="heroImg" class="form-control" value="<%= data.heroImg || '' %>"></div>
-                            <div class="col-12"><label class="form-label fw-bold">Quiénes Somos</label><textarea name="aboutText" class="form-control" rows="3"><%= data.aboutText || '' %></textarea></div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="tab-2">
-                        <div id="services-list"></div>
-                        <button type="button" class="btn btn-primary btn-sm mt-2" onclick="addItem()">+ Agregar Servicio</button>
-                    </div>
-                    <div class="tab-pane fade" id="tab-3">
-                        <div class="row g-3">
-                            <div class="col-md-4"><label class="form-label fw-bold">Color Botones</label><input type="color" name="colorBtn" class="form-control w-100" value="<%= data.colorBtn || '#6366f1' %>"></div>
-                            <div class="col-md-4"><label class="form-label fw-bold">WhatsApp</label><input type="text" name="whatsapp" class="form-control" value="<%= data.whatsapp || '' %>"></div>
-                            <div class="col-md-4"><label class="form-label fw-bold">Email</label><input type="email" name="email" class="form-control" value="<%= data.email || '' %>"></div>
-                        </div>
+<body class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <div class="sidebar-nav">
+                    <h5 class="fw-bold mb-4">Panel Editor</h5>
+                    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-id" type="button">Identidad</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-about" type="button">Quiénes Somos</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-prod" type="button">Productos</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-contact" type="button">Contacto</button>
                     </div>
                 </div>
-                <input type="hidden" name="services_json" id="services_json">
-                <button type="submit" class="btn btn-dark btn-lg w-100 mt-5 shadow">PUBLICAR LANDING</button>
-            </form>
+            </div>
+
+            <div class="col-lg-9">
+                <form action="/guardar/<%= id %>" method="POST" id="mainForm" class="builder-card">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="tab-id">
+                            <h4 class="fw-bold mb-4">Identidad Visual</h4>
+                            <div class="mb-3"><label class="form-label fw-bold">Nombre de Marca</label><input type="text" name="brandName" class="form-control" value="<%= data.brandName || '' %>" required></div>
+                            <div class="mb-3"><label class="form-label fw-bold">URL Logo</label><input type="text" name="logo" class="form-control" value="<%= data.logo || '' %>"></div>
+                            <div class="mb-3"><label class="form-label fw-bold">URL Imagen Hero (Fondo)</label><input type="text" name="heroImg" class="form-control" value="<%= data.heroImg || '' %>"></div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-about">
+                            <h4 class="fw-bold mb-4">Historia y Equipo</h4>
+                            <div class="mb-3"><label class="form-label fw-bold">Nuestra Historia</label><textarea name="aboutText" class="form-control" rows="6"><%= data.aboutText || '' %></textarea></div>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-prod">
+                            <h4 class="fw-bold mb-4">Nuestros Productos</h4>
+                            <div id="products-list"></div>
+                            <button type="button" class="btn btn-primary" onclick="addProduct()">+ Agregar Producto</button>
+                        </div>
+
+                        <div class="tab-pane fade" id="tab-contact">
+                            <h4 class="fw-bold mb-4">Datos de Contacto</h4>
+                            <div class="mb-3"><label class="form-label fw-bold">WhatsApp</label><input type="text" name="whatsapp" class="form-control" value="<%= data.whatsapp || '' %>"></div>
+                            <div class="mb-3"><label class="form-label fw-bold">Email de Contacto</label><input type="email" name="email" class="form-control" value="<%= data.email || '' %>"></div>
+                            <div class="mb-3"><label class="form-label fw-bold">Dirección / Ubicación</label><input type="text" name="address" class="form-control" value="<%= data.address || '' %>"></div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="products_json" id="products_json">
+                    <button type="submit" class="btn btn-dark btn-lg w-100 mt-5 rounded-pill shadow">PUBLICAR CAMBIOS</button>
+                </form>
+            </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let store = { services: <%- JSON.stringify(data.services || []) %> };
-        function addItem() { store.services.push({ title: '', price: '', desc: '' }); render(); }
+        let products = <%- JSON.stringify(data.products || []) %>;
+        function addProduct() { products.push({ name: '', desc: '', price: '' }); render(); }
         function render() {
-            document.getElementById('services-list').innerHTML = store.services.map((s, i) => `
-                <div class="item-box">
-                    <input type="text" placeholder="Título" class="form-control mb-1" value="${s.title}" onchange="store.services[${i}].title=this.value">
-                    <input type="text" placeholder="Precio" class="form-control mb-1" value="${s.price}" onchange="store.services[${i}].price=this.value">
-                    <textarea class="form-control" placeholder="Descripción" onchange="store.services[${i}].desc=this.value">${s.desc}</textarea>
-                    <button type="button" class="btn btn-link btn-sm text-danger" onclick="store.services.splice(${i},1); render()">Eliminar</button>
+            document.getElementById('products-list').innerHTML = products.map((p, i) => `
+                <div class="product-item">
+                    <input type="text" placeholder="Nombre del Producto" class="form-control mb-2" value="${p.name}" onchange="products[${i}].name=this.value">
+                    <textarea placeholder="Descripción" class="form-control mb-2" onchange="products[${i}].desc=this.value">${p.desc}</textarea>
+                    <input type="text" placeholder="Precio" class="form-control" value="${p.price}" onchange="products[${i}].price=this.value">
+                    <button type="button" class="btn btn-link text-danger btn-sm" onclick="products.splice(${i},1); render()">Borrar</button>
                 </div>
             `).join('');
         }
-        document.getElementById('mainForm').onsubmit = () => { document.getElementById('services_json').value = JSON.stringify(store.services); };
+        document.getElementById('mainForm').onsubmit = () => { document.getElementById('products_json').value = JSON.stringify(products); };
         render();
     </script>
 </body>
